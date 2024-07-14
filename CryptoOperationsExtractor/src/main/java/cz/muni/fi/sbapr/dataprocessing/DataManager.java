@@ -26,7 +26,7 @@ public class DataManager {
      */
     public static final int DEFAULT_VOLTAGE_COLUMN = 1;
     public static final int SKIPPING_CONSTANT = 2;
-    public static final String DELIMITING_OPERATION_INSTRUCTION = "B0";
+    public static final String DELIMITING_OPERATION_INSTRUCTION = "adelimiter";
     private static final HashMap<String, OperationInfo> INSTRUCTION_TO_OPERATION_MAPPING;
     static {
         INSTRUCTION_TO_OPERATION_MAPPING = new HashMap<>();
@@ -56,6 +56,23 @@ public class DataManager {
                 , new OperationInfo("BB", "EC256FPKeyPair.genKeyPair", "KeyPair.ALG_EC_FP-256", "KeyGen"));
         INSTRUCTION_TO_OPERATION_MAPPING.put("BC"
                 , new OperationInfo("BC", "EC256FPSign.sign", "Signature.ALG_ECDSA_SHA", "Sign"));
+        /* JCFROST computeSignatureShare() specific instructions */
+        INSTRUCTION_TO_OPERATION_MAPPING.put("adelimiter"
+                , new OperationInfo("adelimiter", "", "1", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("modMult1"
+                , new OperationInfo("modMult1", "", "1", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("modMult2"
+                , new OperationInfo("modMult2", "", "2", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("modMult3"
+                , new OperationInfo("modMult3", "", "3", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("modAdd1"
+                , new OperationInfo("modAdd1", "", "1", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("modAdd2"
+                , new OperationInfo("modAdd2", "", "2", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("clone"
+                , new OperationInfo("clone", "", "", ""));
+        INSTRUCTION_TO_OPERATION_MAPPING.put("copyToByteArray"
+                , new OperationInfo("copyToByteArray", "", "", ""));
     }
     
     public static OperationInfo getOperationInfoForInstruction(String instruction) {

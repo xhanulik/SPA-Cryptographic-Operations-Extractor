@@ -12,7 +12,7 @@ package cz.muni.fi.sbapr.dataprocessing;
  */
 public class ExtractionHelp {
     public static String codeForInstruction(String instruction) {
-        String code = "";
+        String code = String.format("Unknown code for instruction '%s'", instruction);
         switch (instruction) {
             case "B0":
                 code = "for (short i = 0; i < pauseCycles; i++) {}\n" +

@@ -481,7 +481,7 @@ public class MainFrame extends javax.swing.JFrame {
         fillMainFrameModelOperationRecords();
         
         try {
-            logTextArea.append("Strating operation extraction process.\n");
+            logTextArea.append("Starting operation extraction process.\n");
             handleOperationExtractionProcess();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error occurred while loading the trace.");
@@ -519,8 +519,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void displayCodeForCurrentTrace() {
+        String instructionName = mainFrameModel.getCurrentOperationRecord().getInstructionName();
         helpTextArea.setText("Code executed while measuring this trace:\n\n"
-                + ExtractionHelp.codeForInstruction(mainFrameModel.getCurrentOperationRecord().getInstructionName()));
+                + ExtractionHelp.codeForInstruction(instructionName));
     }
     
     private void handleOperationExtractionProcess() throws IOException {
@@ -596,6 +597,7 @@ public class MainFrame extends javax.swing.JFrame {
                 || mainFrameModel.getCurrentOperationRecord().getInstructionName().equals("B7")
                 || mainFrameModel.getCurrentOperationRecord().getInstructionName().equals("B9")
                 || mainFrameModel.getCurrentOperationRecord().getInstructionName().equals("BB")
+                || mainFrameModel.getCurrentOperationRecord().getInstructionName().equals("adelimiter")
                 || !enableSimilaritySearchJCheckBox.isSelected()
                 || delimitingOperationJComboBox.getSelectedItem().equals("No operation")) {
             logTextArea.append("Skipping similarity search.\n");
@@ -609,7 +611,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         List<Boundaries> similaritiesBoundaries = findSimilarities();
         
-        if (similaritiesBoundaries != null && similaritiesBoundaries.size() == 6) {
+        if (similaritiesBoundaries != null && similaritiesBoundaries.size() > 2) {
             logTextArea.append(" - OK\n");
             List<Boundaries> newOperationBoundaries = new ArrayList<>();
             Collections.sort(similaritiesBoundaries);
@@ -618,11 +620,6 @@ public class MainFrame extends javax.swing.JFrame {
                     , similaritiesBoundaries.get(1).getLowerBound()
                     , similaritiesBoundaries.get(0).getLastIndex()
                     , similaritiesBoundaries.get(1).getFirstIndex()));
-            newOperationBoundaries.add(
-                    new Boundaries(similaritiesBoundaries.get(2).getUpperBound()
-                    , similaritiesBoundaries.get(3).getLowerBound()
-                    , similaritiesBoundaries.get(2).getLastIndex()
-                    , similaritiesBoundaries.get(3).getFirstIndex()));
             highlightArea(similaritiesBoundaries
                     , newOperationBoundaries
                     , DataManager.getOperationInfoForInstruction(mainFrameModel.getCurrentOperationRecord().getInstructionName()).getCodeName());
@@ -635,6 +632,18 @@ public class MainFrame extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Similarity search operation unsuccessful.");
             logTextArea.append(" - NOK\n");
+        }
+        for (int i = 0; i < similaritiesBoundaries.size(); i++) {
+            Boundaries boundary = similaritiesBoundaries.get(i);
+            System.out.println(
+                    "[" + mainFrameModel.getCurrentOperationRecord().getInstructionName() + "] "+
+                            "Similarity " + i + " - Lower bound: " + boundary.getLowerBound() + " (first index: " + boundary.getFirstIndex() + ") " +
+                            "Upper bound: " + boundary.getUpperBound() + " (last index: " + boundary.getLastIndex() + ")");
+        }
+        if (similaritiesBoundaries.size() > 2) {
+            double length = similaritiesBoundaries.get(1).getLowerBound() - similaritiesBoundaries.get(0).getUpperBound();
+            System.out.println("\tOperation " + mainFrameModel.getCurrentOperationRecord().getInstructionName() + " - Lower bound: " + similaritiesBoundaries.get(0).getUpperBound() +
+                    " Upper bound: " + similaritiesBoundaries.get(1).getLowerBound() + " (" + length + " ms)");
         }
     }
     
