@@ -15,7 +15,7 @@ import cz.muni.fi.sbapr.util.OverlappingPair;
  * @author Martin
  */
 public class TopNStrategy implements SimilaritySearchStrategy {
-    public static final int TOP_N_STRATEGY_COUNT = 3;
+    public static final int TOP_N_STRATEGY_COUNT = 24;
     
     private final SortedSet<Similarity> similarities;
     private final int topNOccurences;
